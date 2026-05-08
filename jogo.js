@@ -25,6 +25,7 @@ let timerInterval = null;
 let jogoAtivo = false;
 let cartasViradas = [];
 let cartasCombinadas = [];
+let audioEmReproducao = null;
 
 function inicializarTelaInicial() {
     conhecaDiv = document.getElementById('animais-conheca');
@@ -40,8 +41,12 @@ function inicializarTelaInicial() {
         img.src = animal.imagem;
         img.alt = animal.nome;
         img.addEventListener('click', () => {
-            const audio = new Audio(animal.som);
-            audio.play();
+            if (audioEmReproducao) {
+                audioEmReproducao.pause();
+                audioEmReproducao.currentTime = 0;
+            }
+            audioEmReproducao = new Audio(animal.som);
+            audioEmReproducao.play();
         });
         conhecaDiv.appendChild(img);
     });
@@ -126,9 +131,19 @@ function virarCarta(cardDiv, carta) {
         img.style.borderRadius = '8px';
         cardDiv.appendChild(img);
     } else {
-        cardDiv.textContent = carta.nome;
-        const audio = new Audio(carta.som);
-        audio.play();
+        const img = document.createElement('img');
+        img.src = 'assets/imagem/som.jpg';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '8px';
+        cardDiv.appendChild(img);
+        if (audioEmReproducao) {
+            audioEmReproducao.pause();
+            audioEmReproducao.currentTime = 0;
+        }
+        audioEmReproducao = new Audio(carta.som);
+        audioEmReproducao.play();
     }
 
     cartasViradas.push({ div: cardDiv, carta });
@@ -155,3 +170,4 @@ function verificarCombinacao() {
         finalizarJogo();
     }
 }
+       
